@@ -1,52 +1,42 @@
 #include "main.h"
 #include <stdarg.h>
-#include <stdio.h>
+#include <unistd.h>
 
 /**
- * print_char - Helper function to print a character
- * @args: A va_list containing the arguments.
- * @count: The current character count.
- * Return: The updated character count.
+ * write_char - Writes a character to standard output.
+ * @c: The character to be written.
+ *
+ * Return: 1 if successful, -1 on error.
  */
-static int print_char(va_list args, int count)
+int write_char(int c)
 {
-	int c = va_arg(args, int);
-
-	putchar(c);
-	return (count + 1);
+	return ((write(1, &c, 1) == -1 ? -1 : 1));
 }
 
 /**
- * print_string - Helper function to print a string
- * @args: A va_list containing the arguments.
- * @count: The current character count.
- * Return: The updated character count.
+ * write_string - Writes a string to standard output.
+ * @s: The string to be written.
+ *
+ * Return: The number of characters written.
  */
-static int print_string(va_list args, int count)
+int write_string(const char *s)
 {
-	char *s = va_arg(args, char *);
+	int count = 0;
 
-	if (s != NULL)
+	while (*s)
 	{
-		while (*s != '\0')
-		{
-			putchar(*s);
-			s++;
-			count++;
-		}
-	}
-	else
-	{
-		printf("(null)");
-		count += 6;
+		count += write_char(*s);
+		s++;
 	}
 	return (count);
 }
 
 /**
- * _printf - Main function to format and print output
- * @format: A character string containing format specifiers.
- * Return: The number of characters printed.
+ * _printf - Outputs a formatted string to stdout.
+ * @format: The format string.
+ * @...: The variable number of arguments.
+ *
+ * Return: The number of characters printed (excluding the null byte).
  */
 int _printf(const char *format, ...)
 {
@@ -55,12 +45,11 @@ int _printf(const char *format, ...)
 
 	va_start(args, format);
 
-	while (*format != '\0')
+	while (*format)
 	{
 		if (*format != '%')
 		{
-			putchar(*format);
-			count++;
+			count += write_char(*format);
 		}
 		else
 		{
@@ -69,20 +58,24 @@ int _printf(const char *format, ...)
 				break;
 			if (*format == 'c')
 			{
-				count = print_char(args, count);
+				count += write_char(va_arg(args, int));
 			}
 			else if (*format == 's')
 			{
-				count = print_string(args, count);
+				char *s = va_arg(args, char *);
+
+				if (s == NULL)
+					s = "(null)";
+				count += write_string(s);
 			}
 			else if (*format == '%')
 			{
-				putchar('%');
-				count++;
+				count += write_char('%');
 			}
 		}
 		format++;
 	}
+
 	va_end(args);
 	return (count);
 }
