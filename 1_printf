@@ -1,0 +1,13 @@
+#include <stdio.h>
+
+int main() {
+    int number = 42; // Replace with your integer value
+
+    // Using the 'd' specifier to print the integer
+    printf("%d\n", number;
+
+    // Using the 'i' specifier to print the integer
+    printf("%i\n", number);
+
+    return 0;
+}
