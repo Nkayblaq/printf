@@ -8,6 +8,8 @@
 #include <stdarg.h>
 #include <unistd.h>
 #include <string.h>
+#include <stdbool.h>
+#include <stdint.h>
 
 int _printf(const char *format, ...);
 int write_string(const char *s);
